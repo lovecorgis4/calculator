@@ -82,11 +82,11 @@ int main()
         }
         else {
             validChoice = false;
-            std::cout << "Invalid option. Please choose 1-4." << std::endl;
+            std::cout << "Invalid option. Please choose 1-4." << std::cin.get();
         }
 
         if (validChoice && option >= 1 && option <= 4) {
-            std::cout << "Result: " << result << std::endl;
+            std::cout << "Result: " << result << std::cin.get();
         }
 
         if (option != 4) {
