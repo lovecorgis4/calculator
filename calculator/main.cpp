@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 
+// Funktioner
 int Addition(int a, int b) {
     return a + b;
 }
@@ -16,6 +17,9 @@ int Multiplication(int a, int b) {
 int Divide(int a, int b) {
     return a / b;
 }
+
+// Typdefinition för funktionspekare
+using MathFunc = int (*)(int, int);
 
 void waitForEnter() {
     std::cout << "\nPress Enter to continue...";
@@ -35,6 +39,9 @@ int getInt() {
 
 int main() {
     int option = 0;
+
+    // 🔥 Array av funktionspekare
+    MathFunc operations[] = { Addition, Subtraction, Multiplication, Divide };
 
     do {
         std::cout << "\n+--------------+\n";
@@ -68,16 +75,13 @@ int main() {
         int result = 0;
         bool valid = true;
 
-        if (option == 1) result = Addition(num1, num2);
-        else if (option == 2) result = Subtraction(num1, num2);
-        else if (option == 3) result = Multiplication(num1, num2);
-        else if (option == 4) {
-            if (num2 == 0) {
-                std::cout << "Error: Cannot divide by zero.\n";
-                valid = false;
-            } else {
-                result = Divide(num1, num2);
-            }
+        // 🔥 Special-case för division
+        if (option == 4 && num2 == 0) {
+            std::cout << "Error: Cannot divide by zero.\n";
+            valid = false;
+        } else {
+            // 🔥 Här används funktionspekaren
+            result = operations[option - 1](num1, num2);
         }
 
         if (valid) {
