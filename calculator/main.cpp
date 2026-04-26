@@ -1,30 +1,42 @@
 #include <iostream>
 #include <limits>
+#include <sstream>
+#include <iomanip>
 
-int Addition(int a, int b) {
+// ---------- Math functions ----------
+double Addition(double a, double b) {
     return a + b;
 }
 
-int Subtraction(int a, int b) {
+double Subtraction(double a, double b) {
     return a - b;
 }
 
-int Multiplication(int a, int b) {
+double Multiplication(double a, double b) {
     return a * b;
 }
 
-int Divide(int a, int b) {
+double Divide(double a, double b) {
     return a / b;
 }
 
-void waitForEnter() {
-    std::cout << "\nPress Enter to continue...";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cin.get();
+// Function pointer
+using MathFunc = double (*)(double, double);
+
+// ---------- UI helper ----------
+std::string centerText(const std::string& text, int width) {
+    int padding = width - text.length();
+    if (padding <= 0) return text;
+
+    int left = padding / 2;
+    int right = padding - left;
+
+    return std::string(left, ' ') + text + std::string(right, ' ');
 }
 
-int getInt() {
-    int value;
+// ---------- Input ----------
+double getDouble() {
+    double value;
     while (!(std::cin >> value)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -33,8 +45,17 @@ int getInt() {
     return value;
 }
 
+void waitForEnter() {
+    std::cout << "\nPress Enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
+}
+
+// ---------- Main ----------
 int main() {
     int option = 0;
+
+    MathFunc operations[] = { Addition, Subtraction, Multiplication, Divide };
 
     do {
         std::cout << "\n+--------------+\n";
@@ -47,7 +68,7 @@ int main() {
         std::cout << "5. Exit\n";
         std::cout << "Choice: ";
 
-        option = getInt();
+        std::cin >> option;
 
         if (option == 5) {
             std::cout << "Exiting program...\n";
@@ -60,30 +81,31 @@ int main() {
         }
 
         std::cout << "Enter first number: ";
-        int num1 = getInt();
+        double num1 = getDouble();
 
         std::cout << "Enter second number: ";
-        int num2 = getInt();
+        double num2 = getDouble();
 
-        int result = 0;
+        double result = 0;
         bool valid = true;
 
-        if (option == 1) result = Addition(num1, num2);
-        else if (option == 2) result = Subtraction(num1, num2);
-        else if (option == 3) result = Multiplication(num1, num2);
-        else if (option == 4) {
-            if (num2 == 0) {
-                std::cout << "Error: Cannot divide by zero.\n";
-                valid = false;
-            } else {
-                result = Divide(num1, num2);
-            }
+        if (option == 4 && num2 == 0) {
+            std::cout << "Error: Cannot divide by zero.\n";
+            valid = false;
+        } else {
+            result = operations[option - 1](num1, num2);
         }
 
         if (valid) {
-            std::cout << "+---------+\n";
-            std::cout << "|Result: " << result << "|\n";
-            std::cout << "+---------+\n";
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(2) << result;
+            std::string resultStr = "Result: " + oss.str();
+
+            int width = 30;
+
+            std::cout << "+" << std::string(width, '-') << "+\n";
+            std::cout << "|" << centerText(resultStr, width) << "|\n";
+            std::cout << "+" << std::string(width, '-') << "+\n";
         }
 
         waitForEnter();
